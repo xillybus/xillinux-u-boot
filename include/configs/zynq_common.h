@@ -294,7 +294,7 @@
 
 /* default boot is according to the bootmode switch settings */
 #define CONFIG_BOOTCOMMAND		"run $modeboot"
-#define CONFIG_BOOTDELAY		3 /* -1 to Disable autoboot */
+#define CONFIG_BOOTDELAY		1 /* -1 to Disable autoboot */
 #define CONFIG_SYS_LOAD_ADDR		0 /* default? */
 
 #define CONFIG_CMD_CACHE
