@@ -97,7 +97,7 @@
 #define CONFIG_SYS_HZ			1000
 
 /* Miscellaneous configurable options */
-#define CONFIG_SYS_PROMPT		"zynq-uboot> "
+#define CONFIG_SYS_PROMPT		"xillinux-uboot> "
 #define CONFIG_SYS_HUSH_PARSER	/* use "hush" command parser */
 #define CONFIG_SYS_PROMPT_HUSH_PS2	"> "
 
@@ -235,7 +235,7 @@
 	"kernel_image=uImage\0"	\
 	"ramdisk_image=uramdisk.image.gz\0"	\
 	"devicetree_image=devicetree.dtb\0"	\
-	"bitstream_image=system.bit.bin\0"	\
+	"bitstream_image=xillydemo.bit\0"	\
 	"loadbit_addr=0x100000\0"	\
 	"loadbootenv_addr=0x2000000\0" \
 	"kernel_size=0x500000\0"	\
@@ -273,14 +273,13 @@
 			"echo Running uenvcmd ...; " \
 			"run uenvcmd; " \
 		"fi\0" \
-	"sdboot=if mmcinfo; then " \
-			"run uenvboot; " \
-			"echo Copying Linux from SD to RAM... && " \
-			"fatload mmc 0 0x3000000 ${kernel_image} && " \
-			"fatload mmc 0 0x2A00000 ${devicetree_image} && " \
-			"fatload mmc 0 0x2000000 ${ramdisk_image} && " \
-			"bootm 0x3000000 0x2000000 0x2A00000; " \
-		"fi\0" \
+	"sdboot=mmcinfo && " \
+	"echo Booting Xillinux... && " \
+	"fatload mmc 0 0x100000 ${bitstream_image} && " \
+	"fpga loadb 0 0x100000 ${filesize} && " \
+	"fatload mmc 0 0x3000000 ${kernel_image} && " \
+	"fatload mmc 0 0x2A00000 ${devicetree_image} && " \
+	"bootm 0x3000000 - 0x2A00000;\0" \
 	"nandboot=echo Copying Linux from NAND flash to RAM... && " \
 		"nand read 0x3000000 0x100000 ${kernel_size} && " \
 		"nand read 0x2A00000 0x600000 ${devicetree_size} && " \
