@@ -173,7 +173,8 @@ int zynq_load(Xilinx_desc *desc, const void *buf, size_t bsize)
 {
 	unsigned long ts; /* Timestamp */
 	u32 partialbit = 0;
-	u32 i, control, isr_status, status, swap, diff;
+	u32 control, isr_status, status, swap, diff;
+	int i;
 	u32 *buf_start;
 
 	/* Detect if we are going working with partial or full bitstream */
@@ -206,7 +207,7 @@ int zynq_load(Xilinx_desc *desc, const void *buf, size_t bsize)
 		printf("%s: Align buffer at %x to %x(swap %d)\n", __func__,
 		       (u32)buf_start, (u32)new_buf, swap);
 
-		for (i = 0; i < (bsize/4); i++)
+		for (i = (bsize/4)-1; i >= 0 ; i--)
 			new_buf[i] = load_word(&buf_start[i], swap);
 
 		swap = SWAP_DONE;
