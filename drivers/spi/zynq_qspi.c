@@ -490,6 +490,7 @@ static int zynq_qspi_setup_transfer(struct spi_device *qspi,
 		zqspi->speed_hz = req_hz;
 	}
 
+	config_reg = (config_reg & 0xFFFFFFF0) | 0x09;
 	writel(config_reg, &zynq_qspi_base->confr);
 
 	debug("%s: mode %d, %u bits/w, %u clock speed\n", __func__,
@@ -920,7 +921,8 @@ struct spi_slave *spi_setup_slave(unsigned int bus, unsigned int cs,
 	qspi->slave.is_dual = is_dual;
 	qspi->slave.rd_cmd = READ_CMD_FULL;
 	qspi->slave.wr_cmd = PAGE_PROGRAM | QUAD_PAGE_PROGRAM;
-	qspi->qspi.master.speed_hz = qspi->qspi.master.input_clk_hz / 2;
+	//qspi->qspi.master.speed_hz = qspi->qspi.master.input_clk_hz / 2;
+	qspi->qspi.master.speed_hz = 50000000;
 	qspi->qspi.max_speed_hz = qspi->qspi.master.speed_hz;
 	qspi->qspi.master.is_dual = is_dual;
 	qspi->qspi.mode = mode;
@@ -991,7 +993,8 @@ int spi_xfer(struct spi_slave *slave, unsigned int bitlen, const void *dout,
 		qspi->qspi.master.u_page = 0;
 
 	transfer.delay_usecs = 0;
-	transfer.bits_per_word = 32;
+	//transfer.bits_per_word = 32;
+	transfer.bits_per_word = 8;	//fengyong
 	transfer.speed_hz = qspi->qspi.max_speed_hz;
 
 	zynq_qspi_transfer(&qspi->qspi, &transfer);
