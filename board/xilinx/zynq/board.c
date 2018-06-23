@@ -41,7 +41,11 @@ DECLARE_GLOBAL_DATA_PTR;
 Xilinx_desc fpga;
 
 /* It can be done differently */
+Xilinx_desc fpga007s = XILINX_XC7Z007S_DESC(0x07);
 Xilinx_desc fpga010 = XILINX_XC7Z010_DESC(0x10);
+Xilinx_desc fpga012s = XILINX_XC7Z012S_DESC(0x12);
+Xilinx_desc fpga014s = XILINX_XC7Z014S_DESC(0x14);
+Xilinx_desc fpga015 = XILINX_XC7Z015_DESC(0x15);
 Xilinx_desc fpga020 = XILINX_XC7Z020_DESC(0x20);
 Xilinx_desc fpga030 = XILINX_XC7Z030_DESC(0x30);
 Xilinx_desc fpga045 = XILINX_XC7Z045_DESC(0x45);
@@ -56,8 +60,20 @@ int board_init(void)
 	idcode = zynq_slcr_get_idcode();
 
 	switch (idcode) {
+	case XILINX_ZYNQ_7007S:
+		fpga = fpga007s;
+		break;
 	case XILINX_ZYNQ_7010:
 		fpga = fpga010;
+		break;
+	case XILINX_ZYNQ_7012S:
+		fpga = fpga012s;
+		break;
+	case XILINX_ZYNQ_7014S:
+		fpga = fpga014s;
+		break;
+	case XILINX_ZYNQ_7015:
+		fpga = fpga015;
 		break;
 	case XILINX_ZYNQ_7020:
 		fpga = fpga020;
