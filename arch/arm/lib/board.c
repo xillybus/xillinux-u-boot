@@ -119,10 +119,59 @@ static int init_baudrate(void)
 
 static int display_banner(void)
 {
+	struct {
+		int code;
+		char *desc;
+	} bootmodes[] = {
+		{ 0, "JTAG" },
+		{ 1, "QUAD SPI" },
+		{ 2, "NOR Boot" },
+		{ 4, "NAND" },
+		{ 5, "SD Card" },
+		{ 0, (void *) 0 }
+	}, *b;
+
+	struct {
+		int code;
+		char *desc;
+	} idcodes[] = {
+		{ 0x3, "XC7Z007S" },
+		{ 0x2, "XC7Z010" },
+		{ 0x1c, "XC7Z012S" },
+		{ 0x8, "XC7Z014S" },
+		{ 0x1b, "XC7Z015" },
+		{ 0x7, "XC7Z020" },
+		{ 0xc, "XC7Z030" },
+		{ 0x11, "XC7Z045" },
+		{ 0x16, "XC7Z100" },
+		{ 0, (void *) 0 }
+	}, *x;
+
+	char *id_string = "unknown";
+	char *boot_string = "illegal";
+	int cpus = (readl(0xf8f00004) & 3) + 1;
+	int boot_mode = readl(0xf800025c) & 0x7;
+	int ps_version = (readl(0xf8007080) >> 28) & 0x0f;
+	int ps_idcode = (readl(0xf8000530) >> 12) & 0x1f;
+
 	printf("\n\n%s\n\n", version_string);
 
-	printf("Zynq PS_VERSION = %d\n",
-	       (readl(0xf8007080) >> 28) & 0x0f);
+	for (x=idcodes; x->desc; x++)
+		if (x->code == ps_idcode) {
+			id_string = x->desc;
+			break;
+		}
+
+	for (b=bootmodes; b->desc; b++)
+		if (b->code == boot_mode) {
+			boot_string = b->desc;
+			break;
+		}
+
+	/* Ugly hack, extended: Print out various device info */
+	printf("Detected device ID code 0x%x (%s) with %d CPU(s), PS_VERSION = %d\n"
+	       "Strapped boot mode: %d (%s)\n\n",
+	       ps_idcode, id_string, cpus, ps_version, boot_mode, boot_string);
 
 	debug("U-Boot code: %08lX -> %08lX  BSS: -> %08lX\n",
 	       _TEXT_BASE,
